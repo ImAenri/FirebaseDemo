@@ -10,38 +10,45 @@ import Contact from './pages/Contact'
 import Home from './pages/Home'
 import Article from './pages/Article'
 import FormArticle from './pages/FormArticle'
+import Edit from './pages/Edit';
+import Login from './pages/login';
+import Register from './pages/register';
+import { signOut } from 'firebase/auth';
+import { auth } from './firebase/config';
 
 function App() {
-  // const articles = [
-  //   {
-  //     "id": "1",
-  //     "title": "Welcome to the Site",
-  //     "author": "Mario",
-  //     "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, ullam eos dignissimos aperiam rerum qui suscipit cum nobis, totam ea tenetur perferendis praesentium corporis possimus ducimus et minima voluptatum. Numquam mollitia culpa consectetur unde illum est aut dicta eligendi vero molestias impedit sint, maiores saepe voluptas necessitatibus excepturi ducimus repudiandae, non quidem nobis veritatis! Libero neque, cumque illo est corrupti eaque recusandae ipsum, ut debitis vitae molestias deleniti voluptates distinctio sapiente autem. Tempore aperiam minima sit atque, tempora doloribus blanditiis id ipsum. Distinctio quos nisi, totam sunt ex voluptatum? Neque alias laborum ipsum doloremque fuga earum in autem. Hic alias omnis facilis facere eum assumenda deleniti ad, maiores laudantium temporibus odio non, molestiae dolorum! Quo mollitia ex sapiente maiores excepturi?"
-  //   },
-  //   {
-  //     "id": "2",
-  //     "title": "5 React Tips for Beginners",
-  //     "author": "Luigi",
-  //     "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, ullam eos dignissimos aperiam rerum qui suscipit cum nobis, totam ea tenetur perferendis praesentium corporis possimus ducimus et minima voluptatum. Numquam mollitia culpa consectetur unde illum est aut dicta eligendi vero molestias impedit sint, maiores saepe voluptas necessitatibus excepturi ducimus repudiandae, non quidem nobis veritatis! Libero neque, cumque illo est corrupti eaque recusandae ipsum, ut debitis vitae molestias deleniti voluptates distinctio sapiente autem. Tempore aperiam minima sit atque, tempora doloribus blanditiis id ipsum. Distinctio quos nisi, totam sunt ex voluptatum? Neque alias laborum ipsum doloremque fuga earum in autem. Hic alias omnis facilis facere eum assumenda deleniti ad, maiores laudantium temporibus odio non, molestiae dolorum! Quo mollitia ex sapiente maiores excepturi?"
-  //   },
-  //   {
-  //     "id": "3",
-  //     "title": "VS Code Best Packages",
-  //     "author": "Mario",
-  //     "body": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Nisi, ullam eos dignissimos aperiam rerum qui suscipit cum nobis, totam ea tenetur perferendis praesentium corporis possimus ducimus et minima voluptatum. Numquam mollitia culpa consectetur unde illum est aut dicta eligendi vero molestias impedit sint, maiores saepe voluptas necessitatibus excepturi ducimus repudiandae, non quidem nobis veritatis! Libero neque, cumque illo est corrupti eaque recusandae ipsum, ut debitis vitae molestias deleniti voluptates distinctio sapiente autem. Tempore aperiam minima sit atque, tempora doloribus blanditiis id ipsum. Distinctio quos nisi, totam sunt ex voluptatum? Neque alias laborum ipsum doloremque fuga earum in autem. Hic alias omnis facilis facere eum assumenda deleniti ad, maiores laudantium temporibus odio non, molestiae dolorum! Quo mollitia ex sapiente maiores excepturi?"
-  //   }
-  // ];
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setLoggedIn(false); 
+    } catch (error) {
+      console.error('Error signing out:', error.message);
+    }
+  };
 
   return (
-    <div className="App">
+    <div>
       <BrowserRouter>
+    {!loggedIn? (
+      <div>
+        <Routes>
+            <Route path="/" element={<Login setLoggedIn={setLoggedIn} />} /> 
+            <Route path="/register" element={<Register />} /> 
+            <Route path="/*" element={<Navigate to="/" />} />
+        </Routes>
+      </div>
+    ):( 
+    <div className="App">
+      
         <nav>
           <h1>My Articles</h1>
           <NavLink to="/">Home</NavLink>
           <NavLink to="/about">About</NavLink>
           <NavLink to="/contact">Contact</NavLink>
           <NavLink to="/new">New Article</NavLink>
+          <button className='logout' onClick={handleLogout}>Logout</button>
         </nav>
 
         <Routes>
@@ -51,10 +58,13 @@ function App() {
           <Route path="/articles/:urlId" element={<Article/> }/>
           <Route path="/new" element={<FormArticle /> }/>
           <Route path="/*" element={<Navigate to="/"/> }/>
+          <Route path="/edit/:id" element={<Edit/>}/>
+          <Route path="/login" element={<Login/>}/>
         </Routes>
-
-      </BrowserRouter>
     </div>
+  )}
+  </BrowserRouter>
+  </div>
   );
 }
 

@@ -10,9 +10,8 @@ export default function Create() {
   const [author, setAuthor] = useState('')
   const [description, setDescription] = useState('')
   
-  const navigate = useNavigate()
+  const navigate = useNavigate() 
   
-
   const handleSubmit = async (e) => {
     e.preventDefault()   
     const article = {title,author,description};
